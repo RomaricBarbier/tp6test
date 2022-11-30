@@ -29,6 +29,9 @@ public class Voiture {
 	 */
 	public void entreAuGarage(Garage g) throws Exception {
 		// Et si la voiture est déjà dans un garage ?
+		if(this.estDansUnGarage()) {
+			throw new UnsupportedOperationException("La voiture est déjà dans un garage");
+		}
 
 		Stationnement s = new Stationnement(this, g);
 		myStationnements.add(s);
@@ -41,10 +44,12 @@ public class Voiture {
 	 * @throws java.lang.Exception si la voiture n'est pas dans un garage
 	 */
 	public void sortDuGarage() throws Exception {
-		throw new UnsupportedOperationException("Pas encore implémenté");
-		// TODO: Implémenter cette méthode
-		// Trouver le dernier stationnement de la voiture
-		// Terminer ce stationnement
+		if(!this.estDansUnGarage()) {
+			throw new UnsupportedOperationException("La voiture n'est pas dans un garage");
+		}
+
+		this.myStationnements.get(this.myStationnements.size() - 1).terminer();
+
 	}
 
 	/**
@@ -52,7 +57,12 @@ public class Voiture {
 	 */
 	public Set<Garage> garagesVisites() {
 		// TODO: Implémenter cette méthode
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		Set<Garage> myGarage = new HashSet<>();
+
+				for (Stationnement s:this.myStationnements) {
+					myGarage.add(s.getGarage());
+				}
+				return myGarage;
 	}
 
 	/**
@@ -60,7 +70,11 @@ public class Voiture {
 	 */
 	public boolean estDansUnGarage() {
 		// TODO: Implémenter cette méthode
-		throw new UnsupportedOperationException("Pas encore implémenté");
+		if(this.myStationnements.isEmpty()) {
+			return false;
+		}
+		return this.myStationnements.get(this.myStationnements.size() - 1).estEnCours();
+
 		// Vrai si le dernier stationnement est en cours
 	}
 
@@ -81,8 +95,18 @@ public class Voiture {
 	 * @param out l'endroit où imprimer (ex: System.out)
 	 */
 	public void imprimeStationnements(PrintStream out) {
-		// TODO: Implémenter cette méthode
-		throw new UnsupportedOperationException("Pas encore implémenté");
+
+		String impression = "";
+		for(Garage g : this.garagesVisites()) {
+			impression += "\n" + g.toString();
+			for(Stationnement s : this.myStationnements) {
+				if (s.getGarage() == g) {
+					impression += "\n    " + s.toString();
+				}
+			}
+		}
+
+		out.println(impression);
 	}
 
 }
